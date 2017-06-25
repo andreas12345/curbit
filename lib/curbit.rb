@@ -50,15 +50,11 @@ module Curbit
       # end
       #
       def rate_limit(method, opts)
-
         return unless rate_limit_opts_valid?(opts)
 
-        self.class_eval do
-          define_method "rate_limit_#{method}" do
-            rate_limit_filter(method, opts)
-          end
+        self.set_callback :action, :before, only: method do
+          rate_limit_filter(method, opts)
         end
-        self.before_filter("rate_limit_#{method}", :only => method)
       end
 
       private 
